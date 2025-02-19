@@ -58,7 +58,7 @@
             const { data, error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                    redirectTo: "https://yqtytmwcjymdiwdkotsn.supabase.co/auth/v1/callback" // Redirect to the booking page after login
+                    redirectTo: "https://angaleeswari.github.io/Flight_booking/" // Redirect to the booking page after login
                 }
             });
             if (data.session) {
