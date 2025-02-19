@@ -113,6 +113,7 @@
                 currentUserId = user.user.id;
                 document.getElementById('userName').innerHTML = `Hello, ${user.user.email}`;
             } else {
+                window.location.href = "login.html";
                 document.getElementById('userName').innerHTML = 'Welcome, Guest!';
             }
         }
