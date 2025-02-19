@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Booking - Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
+        }
+        button {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Google Login Button -->
+    <div class="container">
+        <h2>Login with Google</h2>
+        <button id="googleLogin">Login with Google</button>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://vbxujmmlhokdmvaasbdf.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZieHVqbW1saG9rZG12YWFzYmRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjM2MzYsImV4cCI6MjA1NTUzOTYzNn0.6QsxomlEpiQH7T3eKjDjsHIaau-KX2f0wnEphOGplkk";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Google Login
+        document.getElementById("googleLogin").addEventListener("click", async () => {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                    redirectTo: "https://yqtytmwcjymdiwdkotsn.supabase.co/auth/v1/callback" // Redirect to the booking page after login
+                }
+            });
+
+            if (error) {
+                console.error("Login error:", error);
+            }
+        });
+    </script>
+
+</body>
+</html>

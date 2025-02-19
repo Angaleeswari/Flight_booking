@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Flight</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .alert {
+            text-align: center;
+            padding: 10px;
+            margin-top: 15px;
+            display: none;
+            border-radius: 5px;
+        }
+
+        .alert.success {
+            background-color: #ccffcc;
+            color: green;
+            border: 1px solid #66cc66;
+        }
+
+        .alert.error {
+            background-color: #ffcccc;
+            color: red;
+            border: 1px solid #ff6666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Book Your Flight</h2>
+        <div id="alertMessage" class="alert"></div>
+        <form id="bookingForm">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="numTickets">Number of Tickets:</label>
+            <input type="number" id="numTickets" min="1" required>
+
+            <label for="userId">User ID:</label>
+            <input type="text" id="userId" readonly>
+
+            <label for="flightId">Flight ID:</label>
+            <input type="text" id="flightId" readonly>
+
+            <button type="submit">Submit Booking</button>
+        </form>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://vbxujmmlhokdmvaasbdf.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZieHVqbW1saG9rZG12YWFzYmRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjM2MzYsImV4cCI6MjA1NTUzOTYzNn0.6QsxomlEpiQH7T3eKjDjsHIaau-KX2f0wnEphOGplkk";
+        
+        //const SUPABASE_URL = "https://yqtytmwcjymdiwdkotsn.supabase.co";
+        //const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlxdHl0bXdjanltZGl3ZGtvdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk4NzY4ODIsImV4cCI6MjA1NTQ1Mjg4Mn0.FpleOmGytLNTXPEPe6I3zc5UxS89d7Ss0yORTj1K1II";
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Get query parameters (flight_id and user_id)
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById("userId").value = urlParams.get("user_id");
+        document.getElementById("flightId").value = urlParams.get("flight_id");
+
+        document.getElementById("bookingForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+        
+            const flight_id = document.getElementById("flightId").value;
+            const number_of_seats = parseInt(document.getElementById("numTickets").value, 10);
+            const user_id = document.getElementById("userId").value;
+            const name = document.getElementById("name").value;
+            const alertBox = document.getElementById("alertMessage");
+        
+            // Fetch the logged-in user
+            const { data: { user }, error: authError } = await supabase.auth.getUser();
+            
+            if (!user || authError) {
+                alert("Please log in first.");
+                return;
+            }
+        
+            try {
+                // Insert booking details into the Supabase database
+                const { data, error } = await supabase.from('bookings').insert([
+                    { user_name: name, flight_id, number_of_seats, user_id: user.id }
+                ]);
+        
+                if (error) {
+                    alert("Error: " + error.message);
+                } else {
+                    document.getElementById("flightId").value = "";
+                    document.getElementById("numTickets").value = "";
+                    document.getElementById("name").value = "";
+                    alertBox.innerText = "Booking successful!";
+                    alertBox.className = "alert success";
+                    alertBox.style.display = "block";
+                    // Redirect after success
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 1500);
+                }
+            } catch (err) {
+                console.error("Unexpected error:", err);
+                alert("An unexpected error occurred.");
+            }
+        });
+    </script>
+</body>
+</html>
