@@ -61,7 +61,16 @@
                     redirectTo: "https://yqtytmwcjymdiwdkotsn.supabase.co/auth/v1/callback" // Redirect to the booking page after login
                 }
             });
+            if (data.session) {
+            // Store the user session
+            console.log("User logged in:", data.session);
+            localStorage.setItem("supabaseSession", JSON.stringify(data.session));
 
+            // Redirect to homepage after login
+            window.location.href = "index.html";
+            } else {
+                console.error("Auth error:", error);
+            }
             if (error) {
                 console.error("Login error:", error);
             }
